@@ -4,6 +4,7 @@ import java.util.List;
 
 public class DefaultWhiteList {
     public static final List<String> URIS = List.of(
+            "/actuator/**",
             "/v3/api-docs/**",
             "/swagger-ui.html",
             "/swagger-ui/**"

@@ -32,20 +32,24 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String uri = request.getRequestURI();
         String method = request.getMethod();
 
-        return DefaultWhiteList.URIS.stream().anyMatch(pattern -> {
+        boolean skip = DefaultWhiteList.URIS.stream().anyMatch(pattern -> {
             if (pattern.contains(":")) {
                 String[] parts = pattern.split(":");
                 return method.equalsIgnoreCase(parts[1]) && uri.startsWith(parts[0]);
             }
             return uri.startsWith(pattern);
         });
+
+        if (skip) {
+            log.debug("security.core.JwtAuthFilter.shouldNotFilter() skip... method={}, uri={}", method, uri);
+        }
+
+        return skip;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
             throws ServletException, IOException {
-
-        log.info("jwt auth filter in...");
 
         // CORS 등 preflight 요청은 JWT 인증 skip
         if ("OPTIONS".equalsIgnoreCase(req.getMethod())) {
@@ -65,11 +69,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String TOKEN_PREFIX = "Bearer ";
 
         var header = req.getHeader(HEADER_STRING);
-        log.info(header);
         if (header == null || !header.startsWith(TOKEN_PREFIX)) {
             chain.doFilter(req, res);
             return;
         }
+
+        log.debug("security.core.JwtAuthFilter.doFilterInternal() in.");
+        log.debug("security.core.JwtAuthFilter.doFilterInternal() header={}", header);
+        log.debug("security.core.JwtAuthFilter.doFilterInternal() method={}, uri={}", req.getMethod(), req.getRequestURI());
+
 
         // 토큰 인증 로직
         // Access 토큰 검증은  컨트롤러로 넘기지 말것.  redis 캐시 DB 등을 사용해 필터 내에서 검증 끝낼것.
