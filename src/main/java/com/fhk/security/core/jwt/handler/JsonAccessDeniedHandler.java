@@ -1,0 +1,25 @@
+package com.fhk.security.core.jwt.handler;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandler;
+
+import java.io.IOException;
+
+@RequiredArgsConstructor
+public class JsonAccessDeniedHandler implements AccessDeniedHandler {
+
+    private final SecurityErrorResponseWriter responseWriter;
+
+    @Override
+    public void handle(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            AccessDeniedException accessDeniedException
+    ) throws IOException {
+
+        responseWriter.writeForbidden(response, "Forbidden");
+    }
+}

@@ -3,6 +3,9 @@ package com.fhk.security.core.jwt;
 import com.fhk.security.core.jwt.config.JwtIssuerProperties;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -56,30 +59,31 @@ public class JwtIssuer {
     public String issueAccessToken(Long userId, String role, Long ver) {
         long now = System.currentTimeMillis();
         return Jwts.builder()
-                .setSubject(String.valueOf(userId))
+                .subject(String.valueOf(userId))
                 .claim("role", role)
                 .claim("version", ver)
 
-                .setId(UUID.randomUUID().toString())
-                .setAudience("access")
-                .setIssuedAt(new Date(now))
-                .setExpiration(new Date(now + accessExpireMs))
+                .id(UUID.randomUUID().toString())
+                .audience().add("access").and()
+                .issuedAt(new Date(now))
+                .expiration(new Date(now + accessExpireMs))
 
-                .signWith(privateKey, SignatureAlgorithm.RS256)
+                .signWith(privateKey, Jwts.SIG.RS256)
                 .compact();
     }
 
     public String issueRefreshToken(Long userId, Long ver) {
         long now = System.currentTimeMillis();
         return Jwts.builder()
-                .setSubject(String.valueOf(userId))
+                .subject(String.valueOf(userId))
                 .claim("version", ver)
 
-                .setId(UUID.randomUUID().toString())
-                .setAudience("refresh")
-                .setIssuedAt(new Date(now))
-                .setExpiration(new Date(now + refreshExpireMs))
+                .id(UUID.randomUUID().toString())
+                .audience().add("refresh").and()
+                .issuedAt(new Date(now))
+                .expiration(new Date(now + refreshExpireMs))
 
-                .signWith(privateKey, SignatureAlgorithm.RS256)
-                .compact();}
+                .signWith(privateKey, Jwts.SIG.RS256)
+                .compact();
+    }
 }

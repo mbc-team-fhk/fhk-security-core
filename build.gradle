@@ -24,14 +24,19 @@ repositories {
 }
 
 dependencies {
+
+    implementation files("libs/fhk-common-1.0.0-plain.jar")
+
     // Api, Exception 관련
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
     // ConfigurationProperties 처리
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
-    // 스프링 시큐리티
+    // 스프링 (autoconfigure, security, redis)
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
@@ -39,10 +44,9 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'   // 테스트용 추가
 
     // jwt 토큰
-    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
-    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 }
 
 tasks.named("bootJar") {

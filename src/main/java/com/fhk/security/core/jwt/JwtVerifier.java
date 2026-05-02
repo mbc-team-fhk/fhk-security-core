@@ -50,13 +50,13 @@ public class JwtVerifier {
     }
 
     public Jws<Claims> parseToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(publicKey)
+        return Jwts.parser()
+                .verifyWith(publicKey)
                 .build()
-                .parseClaimsJws(token);
+                .parseSignedClaims(token);
     }
 
     public Claims getClaims(String token) {
-        return parseToken(token).getBody();
+        return parseToken(token).getPayload();
     }
 }

@@ -1,4 +1,4 @@
-package com.fhk.security.core.interfaces;
+package com.fhk.security.core.jwt.service;
 
 import io.jsonwebtoken.Claims;
 
